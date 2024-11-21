@@ -1,0 +1,169 @@
+substitutions:
+  devicename: "3ch-smart-switch"
+  friendly_name: "3ch Smart Switch"
+
+esphome:
+  name: "$devicename"
+  friendly_name: "${friendly_name}"
+  name_add_mac_suffix: true
+  project:
+    name: MIH.Smart-switch
+    version: "1.0V"
+
+esp8266:
+  board: esp12e
+  framework: 
+    version: recommended
+  restore_from_flash: True
+
+preferences:
+  flash_write_interval: 10s
+
+logger:
+
+api:
+
+ota:
+  - platform: esphome
+
+# This should point to the public location of this yaml file.
+#dashboard_import:
+  #package_import_url: github://esphome/esphome-project-template/project-template-esp32.yaml@v6
+  #import_full_config: false # or true
+
+wifi:
+  ap:
+    password: "12345678"
+
+captive_portal:
+
+web_server:
+  
+improv_serial:
+
+status_led:
+  pin:
+    number: GPIO2
+    inverted: true
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "Switch IP Address"
+      entity_category: "diagnostic"
+      disabled_by_default: True
+      icon: mdi:ip-network
+
+button:
+  - platform: restart
+    icon: mdi:power-cycle
+    name: "Device Reboot"
+    entity_category: "diagnostic"
+    disabled_by_default: True
+
+switch:
+  - platform: template
+    name: Switch Mode
+    id: Switch_mode_enable
+    optimistic: True
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    disabled_by_default: false
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO3 #RX
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button_1
+    filters:
+      - delayed_on_off: 50ms
+    on_press:
+      then:
+        - light.toggle: light_3
+    on_release: 
+    - if:
+        condition:
+          lambda: 'return id(Switch_mode_enable).state == true;'
+        then:
+          - light.toggle: light_3
+
+  - platform: gpio
+    pin:
+      number: GPIO12 #D6
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button_2
+    filters:
+      - delayed_on_off: 50ms
+    on_press:
+      then:
+        - light.toggle: light_2
+    on_release: 
+    - if:
+        condition:
+          lambda: 'return id(Switch_mode_enable).state == true;'
+        then:
+          - light.toggle: light_2
+
+  - platform: gpio
+    pin:
+      number: GPIO13 #D7
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button_3
+    filters:
+      - delayed_on_off: 50ms
+    on_press:
+      then:
+        - light.toggle: light_1
+    on_release: 
+    - if:
+        condition:
+          lambda: 'return id(Switch_mode_enable).state == true;'
+        then:
+          - light.toggle: light_1
+
+output:
+  - platform: gpio
+    pin: GPIO5 #D1
+    id: relay_1
+    inverted: True
+
+  - platform: gpio
+    pin: GPIO4 #D2
+    id: relay_2
+    inverted: True
+
+  - platform: gpio
+    pin: GPIO14 #D5
+    id: relay_3
+    inverted: True
+
+light:
+  - platform: binary
+    name: "Light 1"
+    id: light_1
+    output: relay_1
+    restore_mode: RESTORE_DEFAULT_OFF
+
+
+  - platform: binary
+    name: "Light 2"
+    id: light_2
+    output: relay_2
+    restore_mode: RESTORE_DEFAULT_OFF
+
+
+  - platform: binary
+    name: "Light 3"
+    id: light_3
+    output: relay_3
+    restore_mode: RESTORE_DEFAULT_OFF
