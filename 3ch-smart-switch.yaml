@@ -26,10 +26,9 @@ api:
 ota:
   - platform: esphome
 
-# This should point to the public location of this yaml file.
-#dashboard_import:
-  #package_import_url: github://esphome/esphome-project-template/project-template-esp32.yaml@v6
-  #import_full_config: false # or true
+dashboard_import:
+  package_import_url: github://mih3d/Smart-switch/3ch-smart-switch.yaml@main
+  import_full_config: false # or true
 
 wifi:
   ap:
