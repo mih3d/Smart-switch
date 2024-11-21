@@ -45,6 +45,18 @@ status_led:
     number: GPIO2
     inverted: true
 
+sensor:
+  - platform: resistance
+    sensor: source_sensor
+    configuration: DOWNSTREAM
+    resistor: 5.1kOhm
+    name: Resistance Sensor
+
+# Example source sensor:
+  - platform: adc
+    id: source_sensor
+    pin: A0
+
 text_sensor:
   - platform: wifi_info
     ip_address:
